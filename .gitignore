@@ -1,0 +1,15 @@
+# Binaries
+*.exe
+*.out
+*.app
+
+# Build folders
+/bin/
+/dist/
+
+# Go workspace files
+go.work
+go.work.sum
+
+# OS junk
+.DS_Store
