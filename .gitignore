@@ -13,3 +13,6 @@ go.work.sum
 
 # OS junk
 .DS_Store
+
+# Data files
+repl.go
