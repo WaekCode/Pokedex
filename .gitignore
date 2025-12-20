@@ -15,4 +15,4 @@ go.work.sum
 .DS_Store
 
 # Data files
-repl.go
+repl.log
