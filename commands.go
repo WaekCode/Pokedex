@@ -22,7 +22,7 @@ func commandExit(cfg *nextBack) error {
 func commandMap(cfg *nextBack) error {
 	
 	res, err := apiLocation(cfg, false)
-
+	
 	// fmt.Println(res.Next)
 	// fmt.Println(res.Previous)
 

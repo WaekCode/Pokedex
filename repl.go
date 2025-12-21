@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"github.com/WaekCode/Pokedex/internal/pokecache"
+	"time"
 )
 
 func cleanInput(text string) []string {
@@ -34,7 +36,10 @@ func cleanInput(text string) []string {
 
 
 func startRepl() {
-	cfg := &nextBack{}
+    cache := pokecache.NewCache(time.Minute * 5) // e.g., entries expire every 5 minutes
+    cfg := &nextBack{
+        Cache: cache,
+    }
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 	for {

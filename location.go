@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"io"
+	"github.com/WaekCode/Pokedex/internal/pokecache"
 )
 
 type location struct {
@@ -19,9 +22,12 @@ type location struct {
 type nextBack struct {
 	NextURL     string
 	PreviousURL string
+	Cache       *pokecache.Cache
 }
 
 func apiLocation(cfg *nextBack, prev bool) (location, error) {
+	
+	
 	var url string
 	if prev {
 		url = cfg.PreviousURL
@@ -31,6 +37,25 @@ func apiLocation(cfg *nextBack, prev bool) (location, error) {
 		} else {
 			url = cfg.NextURL
 		}
+	}
+	c := cfg.Cache
+	res,ok := c.Get(url)
+
+	if ok{
+		fmt.Println("Cache resource being used...")
+		var result location
+		err := json.Unmarshal(res, &result)
+		if err != nil {
+			return location{}, err
+		}
+		 cfg.NextURL = result.Next
+		if result.Previous == nil {
+			cfg.PreviousURL = ""
+		} else {
+			cfg.PreviousURL = *result.Previous
+		}
+
+		return result, nil
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -49,9 +74,17 @@ func apiLocation(cfg *nextBack, prev bool) (location, error) {
 		return location{}, fmt.Errorf("API request failed with status: %v", resp.Status)
 	}
 
+	respBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return location{}, err
+	}
+
+	// Add to cache
+	c.Add(url, respBytes)
+
+	// Decode for returning
 	var result location
-	decoder := json.NewDecoder(resp.Body)
-	err = decoder.Decode(&result)
+	err = json.Unmarshal(respBytes, &result)
 	if err != nil {
 		return location{}, err
 	}
