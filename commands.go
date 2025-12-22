@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 )
 
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *nextBack,location string) error
+	callback    func(cfg *nextBack, locationOrPokemon string) error
 }
 
 func commandExit(cfg *nextBack, location string) error {
@@ -28,11 +29,11 @@ func commandMap(cfg *nextBack, location string) error {
 		fmt.Println(v.Name)
 	}
 
-	return err	
+	return err
 }
 
 func commandExplore(cfg *nextBack, location string) error {
-	loc, err := locationDetails(cfg,location)
+	loc, err := locationDetails(cfg, location)
 	if err != nil {
 		fmt.Println("could not explore/find pokemones")
 	}
@@ -53,8 +54,6 @@ func commandMapb(cfg *nextBack, location string) error {
 
 	res, err := apiLocation(cfg, true)
 
-	// fmt.Println(res.Next)
-	// fmt.Println(res.Previous)
 
 	for _, v := range res.Result {
 		fmt.Println(v.Name)
@@ -62,6 +61,31 @@ func commandMapb(cfg *nextBack, location string) error {
 
 	return err
 }
+
+func commandCatch(cfg *nextBack, locationOrPokemon string) error{
+	res, err := getPokemoneDetails(cfg,locationOrPokemon)
+	if err != nil {
+		fmt.Println("could not get pokemone details")
+	}
+
+	baseExperience := res.BaseExperience                  // example base experience of the Pokémon
+	catchThreshold := 255 - baseExperience // higher baseExperience → harder to catch
+
+	randomNumber := rand.Intn(256) // 0–255
+
+
+	fmt.Printf("Throwing a Pokeball at %v...\n", locationOrPokemon)
+
+
+	if randomNumber < catchThreshold {
+		fmt.Println("You caught the Pokémon!")
+	} else {
+		fmt.Println("The Pokémon escaped!")
+	}
+
+	return nil
+}
+
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
@@ -89,6 +113,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Explore a location and see which pokemones are there",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Attempt to catch a pokemone by name",
+			callback:    commandCatch,
 		},
 	}
 }

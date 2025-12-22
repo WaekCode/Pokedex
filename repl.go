@@ -63,6 +63,11 @@ func startRepl() {
 					if errs != nil {
 						fmt.Println(errs)
 					}
+				}else if cmd.name == "catch" {
+					errs := cmd.callback(cfg, Word[1])
+					if errs != nil {
+						fmt.Println(errs)
+					}
 				} else {
 					errs := cmd.callback(cfg,"")
 					if errs != nil {
