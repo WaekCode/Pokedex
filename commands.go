@@ -21,6 +21,10 @@ func commandExit(cfg *nextBack, location string,pokedex *map[string]PokemomDetai
 func commandMap(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 
 	res, err := apiLocation(cfg, false)
+	if err != nil {
+		fmt.Println("could not get locations")
+		return err
+	}
 
 	for _, v := range res.Result {
 		fmt.Println(v.Name)
@@ -33,6 +37,7 @@ func commandExplore(cfg *nextBack, location string,pokedex *map[string]PokemomDe
 	loc, err := locationDetails(cfg, location)
 	if err != nil {
 		fmt.Println("could not explore/find pokemones")
+		return err
 	}
 
 	fmt.Printf("Exploring %v...\n", location)
@@ -63,11 +68,20 @@ func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]Po
 	res, err := getPokemoneDetails(cfg,locationOrPokemon)
 	if err != nil {
 		fmt.Println("could not get pokemone details")
+		return err
 	}
+
+
+	if _, exists := (*pokedex)[res.Name]; exists {
+		fmt.Printf("%v is already caught!\n", res.Name)
+		return nil
+	}
+
+	// Catch logic
+	
 
 	baseExperience := res.BaseExperience                  // example base experience of the Pokémon
 	catchThreshold := 255 - baseExperience // higher baseExperience → harder to catch
-
 	randomNumber := rand.Intn(256) // 0–255
 
 
@@ -75,11 +89,11 @@ func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]Po
 
 
 	if randomNumber < catchThreshold {
-		fmt.Println("You caught the Pokémon!")
+		fmt.Printf("%v was caught!!\n", res.Name)
 		(*pokedex)[res.Name] = res
 		fmt.Printf("Pokedex: %v\n", pokedex)
 	} else {
-		fmt.Println("The Pokémon escaped!")
+		fmt.Printf("%v escaped!\n", res.Name)
 	}
 
 	return nil
