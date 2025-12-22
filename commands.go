@@ -9,21 +9,18 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(cfg *nextBack, locationOrPokemon string) error
+	callback    func(cfg *nextBack, locationOrPokemon string,pokedex *map[string]PokemomDetails) error
 }
 
-func commandExit(cfg *nextBack, location string) error {
+func commandExit(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandMap(cfg *nextBack, location string) error {
+func commandMap(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 
 	res, err := apiLocation(cfg, false)
-
-	// fmt.Println(res.Next)
-	// fmt.Println(res.Previous)
 
 	for _, v := range res.Result {
 		fmt.Println(v.Name)
@@ -32,7 +29,7 @@ func commandMap(cfg *nextBack, location string) error {
 	return err
 }
 
-func commandExplore(cfg *nextBack, location string) error {
+func commandExplore(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 	loc, err := locationDetails(cfg, location)
 	if err != nil {
 		fmt.Println("could not explore/find pokemones")
@@ -45,7 +42,7 @@ func commandExplore(cfg *nextBack, location string) error {
 	return nil
 }
 
-func commandMapb(cfg *nextBack, location string) error {
+func commandMapb(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 
 	if cfg.PreviousURL == "" {
 		fmt.Println("you're on the first page")
@@ -62,7 +59,7 @@ func commandMapb(cfg *nextBack, location string) error {
 	return err
 }
 
-func commandCatch(cfg *nextBack, locationOrPokemon string) error{
+func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]PokemomDetails) error{
 	res, err := getPokemoneDetails(cfg,locationOrPokemon)
 	if err != nil {
 		fmt.Println("could not get pokemone details")
@@ -79,6 +76,8 @@ func commandCatch(cfg *nextBack, locationOrPokemon string) error{
 
 	if randomNumber < catchThreshold {
 		fmt.Println("You caught the Pokémon!")
+		(*pokedex)[res.Name] = res
+		fmt.Printf("Pokedex: %v\n", pokedex)
 	} else {
 		fmt.Println("The Pokémon escaped!")
 	}
@@ -122,7 +121,7 @@ func getCommands() map[string]cliCommand {
 	}
 }
 
-func commandHelp(cfg *nextBack, location string) error {
+func commandHelp(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
 
 	fmt.Println("Welcome to the Pokedex!")
 	fmt.Println("Usage:")

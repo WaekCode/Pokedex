@@ -40,6 +40,7 @@ func startRepl() {
     cfg := &nextBack{
         Cache: cache,
     }
+	pokedex := make(map[string]PokemomDetails)
 	commands := getCommands()
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -59,17 +60,17 @@ func startRepl() {
 				fmt.Println("Unknown command")
 			} else {
 				if cmd.name == "explore" {
-					errs := cmd.callback(cfg, Word[1])
+					errs := cmd.callback(cfg, Word[1], &pokedex)
 					if errs != nil {
 						fmt.Println(errs)
 					}
 				}else if cmd.name == "catch" {
-					errs := cmd.callback(cfg, Word[1])
+					errs := cmd.callback(cfg, Word[1], &pokedex)
 					if errs != nil {
 						fmt.Println(errs)
 					}
 				} else {
-					errs := cmd.callback(cfg,"")
+					errs := cmd.callback(cfg,"", &pokedex)
 					if errs != nil {
 						fmt.Println(errs)
 					}

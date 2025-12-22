@@ -10,6 +10,9 @@ import (
 type PokemomDetails struct {
 	Name                   string          `json:"name"`
 	BaseExperience         int             `json:"base_experience"`
+	Weight                 int             `json:"weight"`
+	Height                 int             `json:"height"`
+	
 
 }
 
