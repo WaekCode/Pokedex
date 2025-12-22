@@ -109,3 +109,38 @@ func TestReapLoop(t *testing.T) {
 		return
 	}
 }
+
+
+func TestGetMissingKey(t *testing.T) {
+	const interval = 5 * time.Second
+	cache := pokecache.NewCache(interval)
+
+	_, ok := cache.Get("https://nonexistent.com")
+	if ok {
+		t.Errorf("expected to not find key")
+		return
+	}
+}
+
+
+
+func TestAddOverwritesExistingKey(t *testing.T) {
+	const interval = 5 * time.Second
+	cache := pokecache.NewCache(interval)
+
+	cache.Add("key",[]byte("testdata"))
+	cache.Add("key",[]byte("newdata"))
+
+	val, ok := cache.Get("key")
+	if !ok {
+		t.Errorf("expected to find key")
+		return
+	}
+
+	if string(val) != "newdata" {
+		t.Errorf("expected value to be 'newdata', got %q", string(val))
+		return
+	}
+
+}
+

@@ -58,9 +58,16 @@ func startRepl() {
 			if !ok {
 				fmt.Println("Unknown command")
 			} else {
-				errs := cmd.callback(cfg)
-				if errs != nil {
-					fmt.Println(errs)
+				if cmd.name == "explore" {
+					errs := cmd.callback(cfg, Word[1])
+					if errs != nil {
+						fmt.Println(errs)
+					}
+				} else {
+					errs := cmd.callback(cfg,"")
+					if errs != nil {
+						fmt.Println(errs)
+					}
 				}
 			}
 
