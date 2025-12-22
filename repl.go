@@ -53,22 +53,27 @@ func startRepl() {
 				continue
 			}
 			firstWord := Word[0]
-			// fmt.Println("Your command was:",firstWord)
+
 
 			cmd, ok := commands[firstWord]
 			if !ok {
 				fmt.Println("Unknown command")
 			} else {
-				if cmd.name == "explore" {
+				if cmd.name == "explore" && len(Word) > 1 {
 					errs := cmd.callback(cfg, Word[1], &pokedex)
 					if errs != nil {
 						fmt.Println(errs)
 					}
-				}else if cmd.name == "catch" {
+				}else if cmd.name == "catch" && len(Word) > 1 {
 					errs := cmd.callback(cfg, Word[1], &pokedex)
 					if errs != nil {
 						fmt.Println(errs)
 					}
+				}else if cmd.name == "inspect" && len(Word) > 1 {
+					errs := cmd.callback(cfg, Word[1], &pokedex)
+					if errs != nil {
+						fmt.Println(errs)
+					}	
 				} else {
 					errs := cmd.callback(cfg,"", &pokedex)
 					if errs != nil {
@@ -82,6 +87,6 @@ func startRepl() {
 				fmt.Println("Error reading input:", err)
 			}
 		}
-
+	
 	}
 }

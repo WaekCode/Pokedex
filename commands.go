@@ -64,6 +64,48 @@ func commandMapb(cfg *nextBack, location string,pokedex *map[string]PokemomDetai
 	return err
 }
 
+
+
+
+
+func commandInspect(cfg *nextBack, pokemon string,pokedex *map[string]PokemomDetails) error{
+	if pokemon != ""{
+	res,ok := (*pokedex)[pokemon]
+	if !ok {
+		fmt.Println("you have not caught that pokemon")
+		return nil
+	}
+
+	// Convert stats to the format you want
+	stats := make(map[string]int)
+	for _, s := range res.Stats {
+		stats[s.Stat.Name] = s.BaseStat
+	}
+
+	fmt.Printf("Name: %v\n", res.Name)
+	fmt.Printf("Height: %v\n", res.Height)
+	fmt.Printf("Weight: %v\n", res.Weight)
+
+	fmt.Println("Stats:")
+	for name, value := range stats {
+		fmt.Printf("  -%s: %d\n", name, value)
+	}
+
+	fmt.Println("Types:")
+	for _, t := range res.Types {
+		fmt.Printf("  - %s\n", t.Type.Name)
+	}
+
+	fmt.Println()
+
+	return nil
+	}
+	return fmt.Errorf("please provide a pokemon name to inspect")
+
+
+}
+
+
 func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]PokemomDetails) error{
 	res, err := getPokemoneDetails(cfg,locationOrPokemon)
 	if err != nil {
@@ -78,7 +120,7 @@ func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]Po
 	}
 
 	// Catch logic
-	
+
 
 	baseExperience := res.BaseExperience                  // example base experience of the Pokémon
 	catchThreshold := 255 - baseExperience // higher baseExperience → harder to catch
@@ -91,7 +133,6 @@ func commandCatch(cfg *nextBack, locationOrPokemon string,pokedex *map[string]Po
 	if randomNumber < catchThreshold {
 		fmt.Printf("%v was caught!!\n", res.Name)
 		(*pokedex)[res.Name] = res
-		fmt.Printf("Pokedex: %v\n", pokedex)
 	} else {
 		fmt.Printf("%v escaped!\n", res.Name)
 	}
@@ -131,6 +172,11 @@ func getCommands() map[string]cliCommand {
 			name:        "catch",
 			description: "Attempt to catch a pokemone by name",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Inspect a caught pokemone by name",
+			callback:    commandInspect,
 		},
 	}
 }

@@ -8,17 +8,27 @@ import (
 )
 
 type PokemomDetails struct {
-	Name                   string          `json:"name"`
-	BaseExperience         int             `json:"base_experience"`
-	Weight                 int             `json:"weight"`
-	Height                 int             `json:"height"`
+	Name   string `json:"name"`
+	Height int    `json:"height"`
+	Weight int    `json:"weight"`
+	BaseExperience int `json:"base_experience"`
 	
-
+	Stats  []struct {
+		BaseStat int `json:"base_stat"`
+		Stat     struct {
+			Name string `json:"name"`
+		} `json:"stat"`
+	} `json:"stats"`
+	Types []struct {
+		Type struct {
+			Name string `json:"name"`
+		} `json:"type"`
+	} `json:"types"`
 }
 
 
-
 func getPokemoneDetails(cfg *nextBack, pokemon string) (PokemomDetails, error) {
+	if pokemon != ""{
 	pokemonurl := "https://pokeapi.co/api/v2/pokemon/" + pokemon + "/"
 	var p PokemomDetails
 
@@ -60,6 +70,7 @@ func getPokemoneDetails(cfg *nextBack, pokemon string) (PokemomDetails, error) {
 	if err5 := json.Unmarshal(respBytes, &p); err5 != nil {
 		return PokemomDetails{}, err5
 	}
-	return p,nil
+	return p,nil}
+	return PokemomDetails{},fmt.Errorf("pokemon name cannot be empty")
 
 }
