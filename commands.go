@@ -64,8 +64,20 @@ func commandMapb(cfg *nextBack, location string,pokedex *map[string]PokemomDetai
 	return err
 }
 
+func commandPokedex(cfg *nextBack, location string,pokedex *map[string]PokemomDetails) error {
+	if len(*pokedex) == 0 {
+		fmt.Println("You have not caught any pokemones yet.")
+		return nil
+	}
 
+	fmt.Println("Your Pokedex:")
+	for k,_ := range *pokedex{
+		fmt.Printf("- %v\n",k)
 
+	}
+	fmt.Println()
+	return nil
+}
 
 
 func commandInspect(cfg *nextBack, pokemon string,pokedex *map[string]PokemomDetails) error{
@@ -177,6 +189,11 @@ func getCommands() map[string]cliCommand {
 			name:        "inspect",
 			description: "Inspect a caught pokemone by name",
 			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all caught pokemones",
+			callback:    commandPokedex,
 		},
 	}
 }
