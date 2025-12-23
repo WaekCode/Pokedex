@@ -87,6 +87,7 @@ func startRepl() {
 				fmt.Println("Error reading input:", err)
 			}
 		}
+		fmt.Println("-----------------------------")
 	
 	}
 }
